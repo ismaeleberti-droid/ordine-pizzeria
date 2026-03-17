@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pizzeria - Ordini Telegram</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 15px;
+}
+.container {
+  background: white; border-radius: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  padding: 25px 20px; width: 100%; max-width: 450px;
+}
+h2 { color: #333; text-align: center; margin-bottom: 5px; font-size: 28px; font-weight: 600; }
+.subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; }
+.input-group { margin-bottom: 20px; }
+label { display: block; margin-bottom: 8px; color: #555; font-weight: 600; font-size: 15px; }
+label i { margin-right: 5px; color: #e74c3c; }
+input, select, textarea {
+  width: 100%; padding: 15px 18px; border: 2px solid #e0e0e0; border-radius: 15px; font-size: 16px;
+  background: #f8f9fa; -webkit-appearance: none; appearance: none; resize: vertical;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: #e74c3c; background: white; }
+.radio-group-moderno { display: flex; flex-direction: column; gap: 12px; }
+.radio-card { background: #f8f9fa; border: 2px solid #e0e0e0; border-radius: 15px; padding: 5px; }
+.radio-card input[type="radio"] { display: none; }
+.radio-card label {
+  display: flex; align-items: center; padding: 15px 18px; margin: 0; border-radius: 12px; background: white;
+  border: 2px solid transparent; transition: all 0.2s; cursor: pointer; font-weight: 500;
+}
+.radio-card input[type="radio"]:checked + label {
+  background: #e74c3c; color: white; border-color: #c0392b;
+}
+.radio-card label small { display: block; font-size: 13px; color: #666; margin-top: 2px; font-weight: normal; }
+.button-group { display: flex; gap: 12px; margin: 20px 0 10px; }
+button { flex: 1; padding: 18px 20px; border: none; border-radius: 15px; font-size: 17px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; -webkit-appearance: none; }
+button:active { opacity: 0.7; }
+.btn-telegram { background: #0088cc; color: white; }
+.btn-secondary { background: #6c757d; color: white; }
+.status-message { margin-top: 20px; padding: 15px; border-radius: 15px; font-size: 15px; text-align: center; font-weight: 500; opacity: 0; transition: opacity 0.3s; display: none; }
+.status-message.show { opacity: 1; display: block; }
+.status-message.success { background: #d4edda; color: #155724; }
+.anteprima-box { background: #f8f9fa; border-radius: 15px; padding: 15px; margin: 20px 0; border: 2px dashed #e74c3c; }
+.anteprima-title { font-size: 14px; color: #e74c3c; margin-bottom: 8px; font-weight: 600; }
+.anteprima-testo { font-family: monospace; font-size: 14px; white-space: pre-wrap; color: #333; line-height: 1.5; background: white; padding: 12px; border-radius: 12px; word-break: break-word; min-height: 120px; }
+.info-note { margin-top: 15px; font-size: 13px; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 15px; }
+::placeholder { color: #aaa; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="container">
+<h2>🍕 Ordina Pizze</h2>
+<div class="subtitle">Compila e invia su Telegram</div>
+<div id="orderForm">
+<div class="input-group">
+<label><i>👤</i> Nome Cliente</label>
+<input type="text" id="nomeCliente" placeholder="es. Mario Rossi" autocomplete="off">
+</div>
+<div class="input-group">
+<label><i>⏰</i> Ora del Ritiro</label>
+<input type="time" id="oraRitiro" placeholder="19:30">
+<small style="color: #888; display: block; margin-top: 5px;">Tocca per selezionare l'orario</small>
+</div>
+<div class="input-group">
+<label><i>📋</i> Elenco Pizze</label>
+<textarea id="elencoPizze" placeholder="es. Margherita x2&#10;Diavola x1&#10;Capricciosa x1"></textarea>
+</div>
+<div class="input-group">
+<label><i>📍</i> Dove Ritira</label>
+<div class="radio-group-moderno">
+<div class="radio-card">
+<input type="radio" name="luogoRitiro" id="luogoBar" value="Bar" checked>
+<label for="luogoBar"><span style="font-size:24px; margin-right:15px;">🍸</span><span><strong>Bar</strong><small>Ritiro al bancone</small></span></label>
+</div>
+<div class="radio-card">
+<input type="radio" name="luogoRitiro" id="luogoFaentina" value="Via Faentina">
+<label for="luogoFaentina"><span style="font-size:24px; margin-right:15px;">🏠</span><span><strong>Via Faentina</strong><small>Ritiro al domicilio</small></span></label>
+</div>
+</div>
+</div>
+<div class="anteprima-box">
+<div class="anteprima-title">👀 ANTEPRIMA IN TEMPO REALE</div>
+<div class="anteprima-testo" id="anteprimaMessaggio">\pizza
+Ordine:
+ora:
+</div>
+</div>
+<div class="button-group">
+<button type="button" class="btn-telegram" onclick="inviaTelegram()"><span>✈️</span> Telegram</button>
+<button type="button" class="btn-secondary" onclick="resetForm()"><span>🔄</span> Nuovo</button>
+</div>
+</div>
+<div id="statusMessage" class="status-message"></div>
+<div class="info-note">⚡ L'anteprima si aggiorna automaticamente mentre scrivi</div>
+</div>
+
+<script>
+function getMessaggio() {
+  const nome = document.getElementById('nomeCliente').value.trim();
+  const ora = document.getElementById('oraRitiro').value;
+  const pizze = document.getElementById('elencoPizze').value.trim();
+  const luogo = document.getElementById('luogoFaentina').checked ? "Via Faentina" : "Bar";
+  return `\/pizza\nOrdine: ${nome||"[nome]"}\nora: ${ora||"[ora]"}\n${pizze||"[elenco pizze]"}\n${luogo}`;
+}
+
+function aggiornaAnteprima() {
+  document.getElementById('anteprimaMessaggio').textContent = getMessaggio();
+}
+
+function inviaTelegram() {
+  const messaggio = getMessaggio();
+  const url = 'https://t.me/share/url?url=&text=' + encodeURIComponent(messaggio);
+  window.open(url,'_blank');
+  const status = document.getElementById('statusMessage');
+  status.textContent = '✈️ Apertura Telegram...';
+  status.className = 'status-message show success';
+  setTimeout(()=>status.classList.remove('show'),2000);
+}
+
+function resetForm() {
+  document.getElementById('nomeCliente').value='';
+  document.getElementById('oraRitiro').value='';
+  document.getElementById('elencoPizze').value='';
+  document.getElementById('luogoBar').checked = true;
+  aggiornaAnteprima();
+  const status = document.getElementById('statusMessage');
+  status.textContent='✅ Nuovo ordine';
+  status.className='status-message show success';
+  setTimeout(()=>status.classList.remove('show'),1500);
+}
+
+window.addEventListener('load',()=>{
+  const elems=['nomeCliente','oraRitiro','elencoPizze','luogoBar','luogoFaentina'].map(id=>document.getElementById(id));
+  elems.forEach(el=>{
+    if(el){el.addEventListener('input', aggiornaAnteprima);}
+    if(el){el.addEventListener('change', aggiornaAnteprima);}
+  });
+  aggiornaAnteprima();
+});
+</script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
