@@ -126,17 +126,19 @@ function aggiornaAnteprima() {
 function inviaTelegram() {
     const messaggio = getMessaggio();
 
-    // Creiamo il link per condividere il messaggio
-    const url = 'https://t.me/share/url?url=&text=' + encodeURIComponent(messaggio); 
+    // Copia automaticamente il messaggio negli appunti
+    navigator.clipboard.writeText(messaggio).then(() => {
+        const status = document.getElementById('statusMessage');
+        status.textContent = '📋 Messaggio copiato negli appunti!';
+        status.classList.add('show', 'success');
+        setTimeout(() => status.classList.remove('show'), 2000);
+    });
 
-    // Apriamo la chat del bot con il messaggio pronto
+    // Apri la chat del bot
+    const url = 'https://t.me/AnticaBottegaBot';
     window.open(url, '_blank');
 
-    const status = document.getElementById('statusMessage');
-    status.textContent = '✈️ Apertura chat Telegram...';
-    status.classList.add('show', 'success');
-
-    setTimeout(() => status.classList.remove('show'), 2000);
+    // L’utente dovrà premere "Incolla" nel bot, ma il messaggio è pronto
 }
 
 function resetForm() {
