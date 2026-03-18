@@ -125,36 +125,35 @@ function aggiornaAnteprima() {
 
 function inviaTelegram() {
     const messaggio = getMessaggio();
-    const testoEncoded = encodeURIComponent(messaggio);
-    const status = document.getElementById('statusMessage');
-    
-    // 1. COPIA NEGLI APPUNTI (sempre attiva)
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(messaggio).then(() => {
-            status.textContent = '📋 Messaggio copiato!';
-            status.classList.add('show', 'success');
-            setTimeout(() => status.classList.remove('show'), 2000);
-        }).catch(err => {
-            console.log('Copia fallita:', err);
-        });
-    }
-    
-    // 2. TENTATIVO CON URL SCHEME (inserimento diretto)
-    const urlScheme = `tg://msg?text=${testoEncoded}&to=@AnticaBottegaBot`;
-    const webUrl = `https://t.me/AnticaBottegaBot?start=${testoEncoded}`;
-    
-    // Prova con URL scheme
-    window.location.href = urlScheme;
-    
-    // 3. FALLBACK: se dopo 500ms l'app non si apre, vai alla versione web
-    setTimeout(() => {
-        window.open(webUrl, '_blank');
-        
-        // Aggiorna messaggio di stato
-        status.textContent = '✅ Testo copiato! Incollalo in Telegram';
-        status.classList.add('show', 'info');
-        setTimeout(() => status.classList.remove('show'), 3000);
-    }, 500);
+
+    const token = "5010675065:AAG9spOEU5CETdPNrXwKUvjXddcX94FFHS4";
+    const chat_id = "1398584715";
+
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            chat_id: chat_id,
+            text: messaggio
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+
+        const status = document.getElementById('statusMessage');
+        status.textContent = '✅ Ordine inviato!';
+        status.className = 'status-message show success';
+    })
+    .catch(error => {
+        console.error(error);
+
+        const status = document.getElementById('statusMessage');
+        status.textContent = '❌ Errore invio';
+        status.className = 'status-message show error';
+    });
 }
 
 function resetForm() {
