@@ -124,42 +124,37 @@ function aggiornaAnteprima() {
 }
 
 function inviaTelegram() {
-    const messaggio = getMessaggio().trim();
+    const messaggio = getMessaggio();
+    const testoEncoded = encodeURIComponent(messaggio);
     const status = document.getElementById('statusMessage');
-
-    if(!messaggio) {
-        status.textContent = '⚠️ Inserisci almeno un campo';
-        status.className = 'status-message show error';
-        return;
+    
+    // 1. COPIA NEGLI APPUNTI (sempre attiva)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(messaggio).then(() => {
+            status.textContent = '📋 Messaggio copiato!';
+            status.classList.add('show', 'success');
+            setTimeout(() => status.classList.remove('show'), 2000);
+        }).catch(err => {
+            console.log('Copia fallita:', err);
+        });
     }
-
-    const token = "5010675065:AAG9spOEU5CETdPNrXwKUvjXddcX94FFHS4";
-    const chat_id = "6493265499";
-
-    status.textContent = '⏳ Invio in corso...';
-    status.className = 'status-message show info';
-
-    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chat_id, text: messaggio })
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log(data);
-        if(data.ok){
-            status.textContent = '✅ Ordine inviato correttamente!';
-            status.className = 'status-message show success';
-        } else {
-            status.textContent = '❌ Errore Telegram: ' + data.description;
-            status.className = 'status-message show error';
-        }
-    })
-    .catch(err=>{
-        console.error(err);
-        status.textContent = '❌ Errore rete';
-        status.className = 'status-message show error';
-    });
+    
+    // 2. TENTATIVO CON URL SCHEME (inserimento diretto)
+    const urlScheme = `tg://msg?text=${testoEncoded}&to=@AnticaBottegaBot`;
+    const webUrl = `https://t.me/AnticaBottegaBot?start=${testoEncoded}`;
+    
+    // Prova con URL scheme
+    window.location.href = urlScheme;
+    
+    // 3. FALLBACK: se dopo 500ms l'app non si apre, vai alla versione web
+    setTimeout(() => {
+        window.open(webUrl, '_blank');
+        
+        // Aggiorna messaggio di stato
+        status.textContent = '✅ Testo copiato! Incollalo in Telegram';
+        status.classList.add('show', 'info');
+        setTimeout(() => status.classList.remove('show'), 3000);
+    }, 500);
 }
 function resetForm() {
   document.getElementById('nomeCliente').value='';
