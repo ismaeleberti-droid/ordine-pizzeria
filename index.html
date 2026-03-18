@@ -125,20 +125,36 @@ function aggiornaAnteprima() {
 
 function inviaTelegram() {
     const messaggio = getMessaggio();
-
-    // Copia automaticamente il messaggio negli appunti
-    navigator.clipboard.writeText(messaggio).then(() => {
-        const status = document.getElementById('statusMessage');
-        status.textContent = '📋 Messaggio copiato negli appunti!';
-        status.classList.add('show', 'success');
-        setTimeout(() => status.classList.remove('show'), 2000);
-    });
-
-    // Apri la chat del bot
-    const url = 'https://t.me/AnticaBottegaBot';
-    window.open(url, '_blank');
-
-    // L’utente dovrà premere "Incolla" nel bot, ma il messaggio è pronto
+    const testoEncoded = encodeURIComponent(messaggio);
+    const status = document.getElementById('statusMessage');
+    
+    // 1. COPIA NEGLI APPUNTI (sempre attiva)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(messaggio).then(() => {
+            status.textContent = '📋 Messaggio copiato!';
+            status.classList.add('show', 'success');
+            setTimeout(() => status.classList.remove('show'), 2000);
+        }).catch(err => {
+            console.log('Copia fallita:', err);
+        });
+    }
+    
+    // 2. TENTATIVO CON URL SCHEME (inserimento diretto)
+    const urlScheme = `tg://msg?text=${testoEncoded}&to=@AnticaBottegaBot`;
+    const webUrl = `https://t.me/AnticaBottegaBot?start=${testoEncoded}`;
+    
+    // Prova con URL scheme
+    window.location.href = urlScheme;
+    
+    // 3. FALLBACK: se dopo 500ms l'app non si apre, vai alla versione web
+    setTimeout(() => {
+        window.open(webUrl, '_blank');
+        
+        // Aggiorna messaggio di stato
+        status.textContent = '✅ Testo copiato! Incollalo in Telegram';
+        status.classList.add('show', 'info');
+        setTimeout(() => status.classList.remove('show'), 3000);
+    }, 500);
 }
 
 function resetForm() {
