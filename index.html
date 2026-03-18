@@ -124,13 +124,16 @@ function aggiornaAnteprima() {
 }
 
 function inviaTelegram() {
-  const messaggio = getMessaggio();
-  const url = 'https://t.me/share/url?url=&text=' + encodeURIComponent(messaggio);
-  window.open(url,'_blank');
-  const status = document.getElementById('statusMessage');
-  status.textContent = '✈️ Apertura Telegram...';
-  status.className = 'status-message show success';
-  setTimeout(()=>status.classList.remove('show'),2000);
+    const messaggio = getMessaggio();
+
+    const url = 'https://t.me/AnticaBottegaBot?text=' + encodeURIComponent(messaggio);
+
+    window.open(url, '_blank');
+
+    const status = document.getElementById('statusMessage');
+    status.textContent = '✈️ Apertura bot Telegram...';
+    status.className = 'status-message show success';
+    setTimeout(() => status.classList.remove('show'), 2000);
 }
 
 function resetForm() {
